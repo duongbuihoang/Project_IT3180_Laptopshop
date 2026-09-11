@@ -1,4 +1,4 @@
-# 🚀 Java Spring MVC - Xây Dựng FullStack Website với Spring Boot (update)
+# 🚀 Java Spring MVC - Xây Dựng FullStack Website với Spring Boot (test)
 
 This is the **starter project** for the **Java Spring MVC - Xây Dựng FullStack Website với Spring Boot** course by **Hỏi Dân IT**.
 
