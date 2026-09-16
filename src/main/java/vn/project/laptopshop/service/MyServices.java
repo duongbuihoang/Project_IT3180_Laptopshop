@@ -1,4 +1,4 @@
-package vn.project.laptopshop.services;
+package vn.project.laptopshop.service;
 
 import org.springframework.stereotype.Service;
 
