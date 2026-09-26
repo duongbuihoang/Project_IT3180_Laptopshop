@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,13 @@ public class UserController {
         // model.addAttribute("newUser", new User());
         // model.addAttribute("test", "from controller with model");
         // return "admin/user/create";
+    }
+
+    @RequestMapping("/admin/user/{id}") // GET method
+    public String getUserDetailPage(Model model, @PathVariable long id) {
+        System.out.println(">>> Check path id: " + id);
+
+        return "admin/user/show";
     }
 
     @RequestMapping("/admin/user/create") // GET method
