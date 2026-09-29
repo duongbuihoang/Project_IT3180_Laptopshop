@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.project.laptopshop.domain.User;
 import vn.project.laptopshop.repository.UserRepository;
 import vn.project.laptopshop.service.UserService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class UserController {
@@ -51,9 +53,34 @@ public class UserController {
 
     @RequestMapping("/admin/user/{id}") // GET method
     public String getUserDetailPage(Model model, @PathVariable long id) {
-        System.out.println(">>> Check path id: " + id);
-
+        User user = this.userService.getUserById(id);
+        model.addAttribute("user", user);
+        model.addAttribute("id", id);
+        // System.out.println(">>> Check path id: " + id);
         return "admin/user/show";
+    }
+
+    @RequestMapping("/admin/user/update/{id}") // GET method
+    public String getUpdateUserPage(Model model, @PathVariable long id) {
+        User currentUser = this.userService.getUserById(id);
+        model.addAttribute("newUser", currentUser); // contact variable between jsp(view) and controller
+        // System.out.println(">>> Check path id: " + id);
+        return "admin/user/update";
+    }
+
+    @PostMapping("/admin/user/update") // POST method
+    public String postUpdateUser(Model model, @ModelAttribute("newUser") User updatedUser) {
+        // TODO: process POST request
+        User currentUser = this.userService.getUserById(updatedUser.getId());
+        if (currentUser != null) {
+            // System.out.println("run here");
+            currentUser.setAddress(updatedUser.getAddress());
+            currentUser.setFullName(updatedUser.getFullName());
+            currentUser.setPhone(updatedUser.getPhone());
+
+            this.userService.handleSaveUser(currentUser);
+        }
+        return "redirect:/admin/user";
     }
 
     @RequestMapping("/admin/user/create") // GET method
