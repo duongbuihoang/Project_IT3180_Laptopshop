@@ -16,6 +16,7 @@ import vn.project.laptopshop.repository.UserRepository;
 import vn.project.laptopshop.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
@@ -35,6 +36,20 @@ public class UserController {
         model.addAttribute("duongbui", "test");
         model.addAttribute("test", "from controller with model");
         return "hello";
+    }
+
+    @RequestMapping("/admin/user/create") // GET method
+    public String getCreateUserPage(Model model) {
+        model.addAttribute("newUser", new User());
+        return "admin/user/create";
+    }
+
+    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
+    public String createUserPage(Model model, @ModelAttribute("newUser") User duongbui) {
+        // System.out.println("run here " + duongbui);
+        // return "hello";
+        this.userService.handleSaveUser(duongbui);
+        return "redirect:/admin/user";
     }
 
     @RequestMapping("/admin/user")
@@ -83,17 +98,20 @@ public class UserController {
         return "redirect:/admin/user";
     }
 
-    @RequestMapping("/admin/user/create") // GET method
-    public String getCreateUserPage(Model model) {
+    @GetMapping("/admin/user/delete/{id}")
+    public String getDeleteUserPage(Model model, @PathVariable long id) {
+        model.addAttribute("id", id);
+        // User user = new User();
+        // user.setId(id);
         model.addAttribute("newUser", new User());
-        return "admin/user/create";
+        return "admin/user/delete";
     }
 
-    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserPage(Model model, @ModelAttribute("newUser") User duongbui) {
-        // System.out.println("run here " + duongbui);
-        // return "hello";
-        this.userService.handleSaveUser(duongbui);
+    @PostMapping("/admin/user/delete")
+    public String postDeleteUser(Model model, @ModelAttribute("newUser") User user) {
+        // long id = user.getId();
+        this.userService.DeleteAUser(user.getId());
+        // System.out.println(">>> Check user id: " + user.getId());
         return "redirect:/admin/user";
     }
 }
