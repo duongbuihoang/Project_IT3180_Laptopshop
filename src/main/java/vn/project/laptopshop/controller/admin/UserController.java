@@ -1,4 +1,4 @@
-package vn.project.laptopshop.controller;
+package vn.project.laptopshop.controller.admin;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class UserController {
         List<User> users = this.userService.getAllUsers();
         model.addAttribute("users1", users);
         // System.out.println(">>> Check users: " + users);
-        return "admin/user/table-user";
+        return "admin/user/show";
 
         // String test = this.userService.handleHello();
         // model.addAttribute("newUser", new User());
@@ -71,7 +71,7 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("id", id);
         // System.out.println(">>> Check path id: " + id);
-        return "admin/user/show";
+        return "admin/user/detail";
     }
 
     @RequestMapping("/admin/user/update/{id}") // GET method
