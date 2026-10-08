@@ -5,15 +5,20 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import vn.project.laptopshop.domain.Role;
 import vn.project.laptopshop.domain.User;
+import vn.project.laptopshop.repository.RoleRepository;
 import vn.project.laptopshop.repository.UserRepository;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public String handleHello() {
@@ -41,5 +46,9 @@ public class UserService {
         User savedUser = this.userRepository.save(user);
         System.out.println("User saved: " + savedUser);
         return savedUser;
+    }
+
+    public Role getRoleByName(String name) {
+        return this.roleRepository.findByName(name);
     }
 }

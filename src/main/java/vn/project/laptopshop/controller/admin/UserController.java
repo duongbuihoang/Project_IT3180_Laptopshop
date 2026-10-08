@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +33,13 @@ public class UserController {
 
     private final UserService userService;
     private final UploadService uploadService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, UploadService uploadService,
-            BCryptPasswordEncoder bCryptPasswordEncoder) {
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.uploadService = uploadService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/")
@@ -65,9 +67,14 @@ public class UserController {
         // return "hello";
 
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+        String hashPassword = this.passwordEncoder.encode(duongbui.getPassword());
 
-        String hashPassword = this.bCryptPasswordEncoder.encode(duongbui.getPassword());
-        // this.userService.handleSaveUser(duongbui);
+        duongbui.setAvatar(avatar);
+        duongbui.setPassword(hashPassword);
+        duongbui.setRole(this.userService.getRoleByName(duongbui.getRole().getName()));
+
+        // save
+        this.userService.handleSaveUser(duongbui);
         return "redirect:/admin/user";
     }
 
