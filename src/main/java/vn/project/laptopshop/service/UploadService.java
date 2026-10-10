@@ -20,6 +20,11 @@ public class UploadService {
     }
 
     public String handleSaveUploadFile(MultipartFile file, String targetFolder) {
+        // don't upload if file is empty
+        if (file.isEmpty()) {
+            return "";
+        }
+
         // private final ServletContext servletContext;
         String rootPath = this.servletContext.getRealPath("/resources/images");
         String finalName = "";

@@ -10,6 +10,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -18,12 +23,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    // @NotEmpty(message = "Email cannot be empty")
     private String email;
+
+    @NotNull
+    @Size(min = 3, message = "Password must be at least 3 characters long")
     private String password;
+
+    @NotNull
+    @Size(min = 3, message = "Full name must be at least 3 characters long")
     private String fullName;
+
     private String address;
     private String phone;
-
     private String avatar;
 
     // roleID
