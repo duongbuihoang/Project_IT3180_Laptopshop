@@ -12,6 +12,6 @@ This is the **project** for the **Java Spring MVC - Xây Dựng Website Laptopsh
 
 ===
 Môi trường chạy dự án: Java 17
-Phần mềm dùng để quản lý mua bán laptop online
+
 
 
