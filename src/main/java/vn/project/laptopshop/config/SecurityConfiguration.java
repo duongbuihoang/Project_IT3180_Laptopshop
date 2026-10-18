@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import jakarta.servlet.DispatcherType;
 import vn.project.laptopshop.service.CustomUserDetailsService;
@@ -43,6 +44,11 @@ public class SecurityConfiguration {
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationSuccessHandler customSuccessHandler() {
+        return new CustomSuccessHandler();
+    }
+
     @Bean // override
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // v6, lambda function style
@@ -52,13 +58,17 @@ public class SecurityConfiguration {
                         // Forward call
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE)
                         .permitAll()
-
-                        .requestMatchers("/", "/login", "/client/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/login", "/products/**",
+                                "/client/**", "/css/**", "/js/**", "/images/**")
+                        .permitAll()
+                        // ROLE_ADMIN
+                        .requestMatchers("/admin**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .failureUrl("/login?error")
+                        .successHandler(customSuccessHandler())
                         .permitAll());
 
         return http.build();
