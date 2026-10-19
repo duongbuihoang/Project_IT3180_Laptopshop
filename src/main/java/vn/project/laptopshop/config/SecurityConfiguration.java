@@ -61,15 +61,16 @@ public class SecurityConfiguration {
                         .requestMatchers("/", "/login", "/products/**",
                                 "/client/**", "/css/**", "/js/**", "/images/**")
                         .permitAll()
-                        // ROLE_ADMIN
-                        .requestMatchers("/admin**").hasRole("ADMIN")
+                        // ROLE_ADMIN: protect the dashboard and every admin sub-route
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .failureUrl("/login?error")
                         .successHandler(customSuccessHandler())
-                        .permitAll());
+                        .permitAll())
+                .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"));
 
         return http.build();
     }
