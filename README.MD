@@ -1,137 +1,263 @@
-# LaptopShop – Java Spring Boot MVC
+# Laptopshop
 
-Ứng dụng website bán laptop được xây dựng bằng **Java 17, Spring Boot, Spring MVC, Spring Data JPA, Spring Security, JSP và MySQL**. Dự án có giao diện khách hàng và khu vực quản trị để quản lý sản phẩm, người dùng và đơn hàng.
+Website bán laptop được xây dựng bằng Java Spring Boot theo mô hình MVC. Dự án gồm giao diện cửa hàng cho khách hàng và khu vực quản trị dành cho người dùng có quyền `ADMIN`.
 
-> Đây là dự án học tập. Cấu hình database trong source hiện đang dùng tài khoản `root` và mật khẩu mẫu `123456`; hãy đổi lại cho phù hợp với máy của bạn, không dùng cấu hình mẫu này khi triển khai công khai.
+> Đây là dự án học tập. Không sử dụng thông tin đăng nhập mẫu hoặc cấu hình database phát triển khi triển khai production.
+
+## Tính năng
+
+### Khách hàng
+
+- Xem danh sách sản phẩm tại trang chủ.
+- Xem thông tin chi tiết sản phẩm.
+- Đăng ký tài khoản.
+- Đăng nhập và đăng xuất bằng Spring Security.
+- Hiển thị trang thông báo khi tài khoản không có quyền truy cập.
+
+### Quản trị viên
+
+- Xem dashboard quản trị.
+- Quản lý sản phẩm: danh sách, chi tiết, thêm, cập nhật, xóa và tải ảnh.
+- Quản lý người dùng: danh sách, chi tiết, thêm, cập nhật và xóa.
+- Xem danh sách đơn hàng.
 
 ## Công nghệ sử dụng
 
 - Java 17
 - Spring Boot 3.2.2
-- Maven (đã kèm Maven Wrapper)
-- MySQL
-- Spring MVC, Spring Data JPA / Hibernate
+- Spring MVC
+- Spring Data JPA / Hibernate
 - Spring Security
+- MySQL
 - JSP / JSTL
-- HTML, CSS, JavaScript, Bootstrap
+- Bootstrap, HTML, CSS và JavaScript
+- Maven Wrapper
 
-## Chức năng chính
+## Yêu cầu môi trường
 
-- Trang chủ hiển thị danh sách laptop và trang chi tiết sản phẩm.
-- Đăng ký và đăng nhập bằng Spring Security.
-- Quản trị sản phẩm: xem danh sách, xem chi tiết, thêm, sửa, xóa và tải ảnh lên.
-- Khu vực quản trị người dùng, đơn hàng và dashboard.
-- Lưu dữ liệu thông qua MySQL và Spring Data JPA.
+- JDK 17 trở lên
+- MySQL 8.x hoặc phiên bản tương thích
+- Git (nếu clone source từ repository)
+- Không bắt buộc cài Maven riêng vì dự án đã có `mvnw` và `mvnw.cmd`
 
-## Yêu cầu trước khi chạy
+## Cài đặt
 
-1. Cài **JDK 17** và kiểm tra bằng `java -version`.
-2. Cài **MySQL Server** (MySQL 8.x được khuyến nghị) và khởi động dịch vụ MySQL.
-3. Có thể dùng IntelliJ IDEA hoặc VS Code để mở source.
-4. Không bắt buộc cài Maven riêng vì dự án có `mvnw` / `mvnw.cmd`.
+### 1. Clone source
 
-## Cài đặt và chạy ở máy local
+```bash
+git clone <repository-url>
+cd 01-java-spring-laptopshop-starter-master
+```
 
-### 1. Tải source
+Hoặc mở trực tiếp thư mục dự án có chứa `pom.xml`.
 
-Clone repository hoặc giải nén source vào một thư mục. Mở terminal tại thư mục gốc — nơi có `pom.xml` và `mvnw.cmd`.
+### 2. Tạo database
 
-### 2. Tạo database MySQL
-
-Đăng nhập MySQL bằng tài khoản có quyền tạo database và chạy:
+Đăng nhập MySQL và tạo database:
 
 ```sql
 CREATE DATABASE laptopshop
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
 ```
 
-Ứng dụng đang cấu hình kết nối tới database `laptopshop` ở `localhost:3306`.
+Ứng dụng mặc định kết nối tới MySQL tại `localhost:3306/laptopshop`.
 
-### 3. Cấu hình kết nối database
+### 3. Cấu hình database
 
-Mở file `src/main/resources/application.properties` và chỉnh thông tin cho khớp với MySQL trên máy:
+Mở [application.properties](src/main/resources/application.properties) và cập nhật thông tin kết nối:
 
 ```properties
 spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:3306/laptopshop
-spring.datasource.username=root
-spring.datasource.password=123456
+spring.datasource.username=<mysql-username>
+spring.datasource.password=<mysql-password>
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
 ```
 
-Thay `spring.datasource.username` và `spring.datasource.password` bằng tài khoản MySQL của bạn. Nếu MySQL chạy trên cổng khác, cập nhật URL tương ứng. `ddl-auto=update` cho phép Hibernate cập nhật cấu trúc bảng theo entity; nên sao lưu dữ liệu trước khi thay đổi schema.
+Không commit mật khẩu thật vào Git. Có thể sử dụng biến môi trường hoặc cơ chế quản lý secrets của môi trường triển khai.
 
-**Lưu ý về dữ liệu ban đầu:** dự án có dùng các role tên `USER` và `ADMIN`. Đăng ký tài khoản mới cần có role `USER` trong bảng role trước đó; tài khoản quản trị cần được gán role phù hợp. Kiểm tra entity `Role`, `User` và `UserService` để xác nhận tên bảng/cột thực tế, sau đó thêm dữ liệu role theo schema được Hibernate tạo. Source không kèm script seed dữ liệu, nên database mới có thể cần bước khởi tạo này trước khi đăng ký/đăng nhập hoạt động đầy đủ.
+### 4. Khởi tạo role
 
-### 4. Chạy ứng dụng
+Tài khoản đăng ký mới được gán role `USER`. Vì vậy, database cần có role này trước khi đăng ký tài khoản:
 
-**Windows (PowerShell hoặc CMD):**
+```sql
+INSERT INTO roles (name, description)
+VALUES ('USER', 'Khách hàng');
+
+INSERT INTO roles (name, description)
+VALUES ('ADMIN', 'Quản trị viên');
+```
+
+Nếu role đã tồn tại, không cần chạy lại các câu lệnh trên. Có thể kiểm tra bằng:
+
+```sql
+SELECT id, name, description
+FROM roles;
+```
+
+Để cấp quyền quản trị cho một tài khoản:
+
+```sql
+UPDATE users
+SET role_id = (SELECT id FROM roles WHERE name = 'ADMIN')
+WHERE email = '<admin-email>';
+```
+
+Trong ứng dụng, role được chuyển thành authority theo quy tắc:
+
+```text
+USER  -> ROLE_USER
+ADMIN -> ROLE_ADMIN
+```
+
+## Chạy ứng dụng
+
+### Windows
+
+Mở PowerShell hoặc Command Prompt tại thư mục gốc dự án:
 
 ```bat
 .\mvnw.cmd spring-boot:run
 ```
 
-**macOS / Linux:**
+### macOS / Linux
 
 ```bash
 chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
-Lần chạy đầu tiên Maven sẽ tải dependencies nên có thể mất vài phút. Khi ứng dụng khởi động thành công, mở:
+Sau khi ứng dụng khởi động, truy cập:
 
-- Website: http://localhost:8080/
-- Đăng nhập: http://localhost:8080/login
+- Trang chủ: http://localhost:8080/
 - Đăng ký: http://localhost:8080/register
-- Quản lý sản phẩm: http://localhost:8080/admin/product (cần đăng nhập và quyền phù hợp)
+- Đăng nhập: http://localhost:8080/login
+- Chi tiết sản phẩm: http://localhost:8080/product/{id}
+- Dashboard admin: http://localhost:8080/admin
+- Quản lý sản phẩm: http://localhost:8080/admin/product
+- Quản lý người dùng: http://localhost:8080/admin/user
+- Quản lý đơn hàng: http://localhost:8080/admin/order
 
-Để dừng ứng dụng, nhấn `Ctrl + C` trong terminal.
+Thay `{id}` bằng mã sản phẩm thực tế. Dừng ứng dụng bằng `Ctrl + C`.
 
-### 5. Chạy bằng IntelliJ IDEA
+## Phân quyền
 
-1. Chọn **Open** và mở thư mục chứa `pom.xml`.
-2. Đặt Project SDK là **Java 17** và chờ Maven tải dependencies.
-3. Đảm bảo MySQL đã chạy, database đã tạo và `application.properties` đã được cập nhật.
-4. Mở `src/main/java/vn/project/laptopshop/LaptopshopApplication.java`.
-5. Chạy phương thức `main()` bằng nút Run.
+Các route `/admin` và `/admin/**` yêu cầu role `ADMIN`:
+
+```text
+/admin
+/admin/**
+```
+
+Nếu người dùng đã đăng nhập nhưng không có quyền, Spring Security chuyển hướng tới `/access-denied` và hiển thị view `client/auth/deny`.
+
+Người dùng chưa đăng nhập khi truy cập route cần xác thực sẽ được chuyển tới trang đăng nhập.
+
+## Chạy test
+
+### Windows
+
+```bat
+.\mvnw.cmd test
+```
+
+### macOS / Linux
+
+```bash
+./mvnw test
+```
+
+Biên dịch mà không chạy test:
+
+```bat
+.\mvnw.cmd -DskipTests compile
+```
 
 ## Cấu trúc thư mục
 
 ```text
-src/main/java/vn/project/laptopshop/
-├── config/          # Cấu hình Spring Security, MVC
-├── controller/
-│   ├── client/      # Trang chủ, đăng nhập/đăng ký, chi tiết sản phẩm
-│   └── admin/       # Dashboard, sản phẩm, người dùng, đơn hàng
-├── domain/          # Entity và DTO
-├── repository/      # Truy vấn dữ liệu qua Spring Data JPA
-├── service/         # Nghiệp vụ ứng dụng
-└── LaptopshopApplication.java
-
-src/main/resources/
-└── application.properties
-
-src/main/webapp/
-└── WEB-INF/view/    # JSP views cho client và admin
+src/
+├── main/
+│   ├── java/vn/project/laptopshop/
+│   │   ├── config/          # Spring Security, MVC và xử lý đăng nhập
+│   │   ├── controller/
+│   │   │   ├── client/      # Trang cửa hàng, auth và chi tiết sản phẩm
+│   │   │   └── admin/       # Dashboard, sản phẩm, user và order
+│   │   ├── domain/          # Entity và DTO
+│   │   ├── repository/      # Spring Data repositories
+│   │   └── service/         # Logic nghiệp vụ
+│   ├── resources/
+│   │   └── application.properties
+│   └── webapp/
+│       ├── WEB-INF/view/    # JSP views client và admin
+│       └── resources/       # CSS, JavaScript và hình ảnh
+└── test/                    # Kiểm thử tự động
 ```
 
-## Một số lỗi thường gặp
+## Cấu hình bổ sung
 
-- **`Communications link failure` / không kết nối được MySQL:** kiểm tra MySQL đã chạy chưa, cổng trong JDBC URL, username/password và database `laptopshop`.
-- **`Unknown database 'laptopshop'`:** tạo database theo bước 2.
-- **Lỗi thiếu role khi đăng ký:** đảm bảo bảng role có bản ghi tên `USER`; tạo/gán role quản trị nếu cần.
-- **Port 8080 đang được sử dụng:** dừng ứng dụng đang chiếm cổng hoặc thêm `server.port=8081` vào `application.properties`, sau đó mở cổng mới.
-- **Maven tải dependency thất bại:** kiểm tra kết nối mạng, proxy và thử chạy lại lệnh Maven.
-- **Không đăng nhập được vào trang quản trị:** đăng ký tài khoản trước, kiểm tra role được gán trong database và quy tắc phân quyền trong `SecurityConfiguration` cùng controller.
+Một số cấu hình hiện tại trong `application.properties`:
 
-## Ghi chú bảo mật
+- Hibernate tự cập nhật schema với `spring.jpa.hibernate.ddl-auto=update`.
+- Hiển thị SQL trong log với `spring.jpa.show-sql=true`.
+- Giới hạn file upload: 50 MB.
+- Giới hạn tổng request upload: 50 MB.
+- Log Spring Security đang bật ở mức `DEBUG` để hỗ trợ phát triển.
 
-- Không commit mật khẩu database thật, file `.env`, thông tin tài khoản hay dữ liệu cá nhân lên GitHub.
-- Đổi mật khẩu mẫu trong cấu hình trước khi chia sẻ hoặc triển khai.
-- Chỉ cấp quyền quản trị cho tài khoản đáng tin cậy.
+Khi triển khai production, nên:
 
-## Tác giả / liên hệ
+- Đổi `ddl-auto` sang quy trình migration có kiểm soát.
+- Tắt log SQL và log security ở mức `DEBUG`.
+- Dùng secrets/environment variables cho thông tin database.
+- Giới hạn kích thước và định dạng file upload.
+- Bật HTTPS và cấu hình domain phù hợp.
 
+## Xử lý lỗi thường gặp
 
+### Không kết nối được MySQL
+
+Kiểm tra:
+
+1. MySQL đã được khởi động.
+2. Database `laptopshop` đã tồn tại.
+3. Username, password và port trong `application.properties` chính xác.
+4. Biến môi trường `MYSQL_HOST` không trỏ tới host sai.
+
+### Lỗi `Unknown database 'laptopshop'`
+
+Tạo database theo phần [Tạo database](#2-tạo-database).
+
+### Đăng ký tài khoản bị lỗi do role
+
+Đảm bảo bảng `roles` có role tên chính xác là `USER`. Tên role được phân biệt theo dữ liệu lưu trong database.
+
+### USER truy cập khu vực admin
+
+Đảm bảo:
+
+- Ứng dụng đã được restart sau khi thay đổi cấu hình.
+- Tài khoản đã logout và login lại để tạo phiên xác thực mới.
+- Role của tài khoản trong database là `USER`, không phải `ADMIN`.
+- Rule trong `SecurityConfiguration` vẫn bảo vệ `/admin` và `/admin/**`.
+
+### Port 8080 đã được sử dụng
+
+Thêm cấu hình sau vào `application.properties`:
+
+```properties
+server.port=8081
+```
+
+Sau đó truy cập http://localhost:8081/.
+
+## Bảo mật
+
+- Không commit password database, token, dữ liệu cá nhân hoặc file secrets.
+- Không cấp role `ADMIN` cho tài khoản không tin cậy.
+- Không sử dụng password mặc định trong môi trường thật.
+- Nên thay đổi cấu hình log và upload trước khi triển khai production.
+
+## Tác giả
+
+Dự án phục vụ mục đích học tập và thực hành Java Spring Boot.
