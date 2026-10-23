@@ -97,6 +97,7 @@
                                                                 <i class="fa fa-minus"></i>
                                                             </button>
                                                         </div>
+                                                        <!-- html attributes -->
                                                         <input type="text"
                                                             class="form-control form-control-sm text-center border-0"
                                                             value="${cartDetail.quantity}"

@@ -95,4 +95,32 @@ public class ProductService {
         }
 
     }
+
+    public Cart fetchByUser(User user) {
+        return this.cartRepository.findByUser(user);
+    }
+
+    public void handleRemoveCartDetail(long cartDetailId, HttpSession session) {
+        Optional<CartDetail> cartDetailOptional = this.cartDetailRepository.findById(cartDetailId);
+        if (cartDetailOptional.isPresent()) {
+            CartDetail cartDetail = cartDetailOptional.get();
+
+            Cart currentCart = cartDetail.getCart();
+            // delete cart detail
+            this.cartDetailRepository.deleteById(cartDetailId);
+
+            // update cart sum
+            if (currentCart.getSum() > 1) {
+                // update current cart sum
+                int newSum = currentCart.getSum() - 1;
+                currentCart.setSum(newSum);
+                session.setAttribute("sum", newSum);
+                this.cartRepository.save(currentCart);
+            } else {
+                // delete cart (sum = 1)
+                this.cartRepository.deleteById(currentCart.getId());
+                session.setAttribute("sum", 0);
+            }
+        }
+    }
 }
